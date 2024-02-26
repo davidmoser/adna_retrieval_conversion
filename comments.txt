@@ -1,0 +1,30 @@
+HO: Human origins
+- 4k present day individuals
+- 600k SNPs
+
+1240K:
+- 16k ancient individuals
+- 6k present-day individuals
+- 1233k SNPs
+
+.anno
+Rich meta-information for each individual.
+
+.ind
+Three columns: Individual ID, sex determination, and group label (population).
+
+.snp
+Information on each analyzed SNP position (SNP id, physical/genetic location and reference/variant alleles, where the reference allele matches hg19).
+
+.geno
+Genotypes (see note 2 below)
+
+Managed to compile convertf with help of ChatGPT, needed to libraries (mentioned in README) but then
+also had to add another library to the Makefile as a parameter.
+
+Convert packed ancestrymap to eigenstrat format (for further conversion to skicit allel format):
+Set parameters in CONVERTF/par.PACKEDANCESTRYMAP.ANCESTRYMAP to correct file
+Run: ../bin/convertf -p par.PACKEDANCESTRYMAP.ANCESTRYMAP
+
+Convert eigenstrat format to vcf:
+Run: python eigenstrat2vcf.py -s aadr_v54.1.p1_1240K_public_eigenstrat.snp -i aadr_v54.1.p1_1240K_public_eigenstrat.ind -g aadr_v54.1.p1_1240K_public_eigenstrat.geno -o aadr_v54.1.p1_1240K_public_eigenstrat.vcf
