@@ -1,5 +1,15 @@
 from pyDataverse.api import NativeApi, DataAccessApi
 
+"""
+This script downloads all files from a specified dataset in the Allen Ancient DNA Database hosted on Dataverse.
+The script uses the pyDataverse library to interact with the Dataverse API, retrieve the dataset, and download each file.
+
+Usage:
+- Set the base_url to the Dataverse instance URL.
+- Replace DOI with the dataset DOI.
+- Run the script to download all files from the dataset.
+"""
+
 # Set the base URL of the Dataverse
 base_url = 'https://dataverse.harvard.edu/'
 
@@ -7,7 +17,7 @@ base_url = 'https://dataverse.harvard.edu/'
 api = NativeApi(base_url)
 data_api = DataAccessApi(base_url)
 
-# Replace with the actual DOI of the Allen Ancient DNA Database
+# DOI of the Allen Ancient DNA Database
 DOI = "https://doi.org/10.7910/DVN/FFIDCW"
 
 # Get the dataset

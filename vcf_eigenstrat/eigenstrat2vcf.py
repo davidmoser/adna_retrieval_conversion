@@ -1,5 +1,12 @@
 import argparse
 
+"""
+This script converts genetic data from Eigenstrat format to VCF format.
+Reads .snp, .ind, and .geno files, processes the data, and writes to a VCF file.
+
+Usage example:
+python script.py -s input.snp -i input.ind -g input.geno -o output.vcf -sx 1000 -ix 100
+"""
 
 class SNP:
     def __init__(self, identifier, chromosome, position, reference_allele, alternate_allele):

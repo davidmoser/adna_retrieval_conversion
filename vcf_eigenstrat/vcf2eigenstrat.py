@@ -1,17 +1,19 @@
-# Convert a vcf_eigenstrat file to eigenstrat format
-# removes multi-alleleic and indel sites. 
-# usage: python vcf2eigenstrat.py -v vcf_file.vcf_eigenstrat(.gz) -o out_root
-# will generate out_root.[snp,ind,geno].
-# removed multiallelic sites and indels
-# Deals with haploid cases including mixed haploid/diplod like X as well. 
-# -i option is a .ind file to get population names and sex.
-
 import getopt
 import gzip
 import sys
 
+"""
+Source: https://github.com/mathii/gdc/blob/master/vcf2eigenstrat.py
 
-################################################################################
+Convert a vcf_eigenstrat file to eigenstrat format
+removes multi-alleleic and indel sites. 
+usage: python vcf2eigenstrat.py -v vcf_file.vcf_eigenstrat(.gz) -o out_root
+will generate out_root.[snp,ind,geno].
+removed multiallelic sites and indels
+Deals with haploid cases including mixed haploid/diplod like X as well. 
+-i option is a .ind file to get population names and sex.
+"""
+
 
 def parse_options():
     """
@@ -43,8 +45,6 @@ def parse_options():
     print(options)
     return options
 
-
-################################################################################
 
 def main(options):
     """
@@ -112,8 +112,6 @@ def main(options):
     return
 
 
-################################################################################
-
 def decode_gt_string(gt_string):
     """
     Tries to work out the genotype from a vcf_eigenstrat genotype entry. 9 for missing [or not in {0,1,2}]
@@ -150,8 +148,6 @@ def open2(file, mode="r"):
     else:
         return open(file, mode)
 
-
-################################################################################
 
 if __name__ == "__main__":
     options_ = parse_options()
