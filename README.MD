@@ -1,9 +1,7 @@
 # Allen DNA Database Scripts
 
 ## Overview
-This project provides scripts for downloading and converting ancient DNA data from the Allen Ancient DNA Database.
-
-[Allen Ancient DNA Resource](https://reich.hms.harvard.edu/allen-ancient-dna-resource-aadr-downloadable-genotypes-present-day-and-ancient-dna-data)
+This project provides scripts for downloading and converting ancient DNA data from the [Allen Ancient DNA Resource](https://reich.hms.harvard.edu/allen-ancient-dna-resource-aadr-downloadable-genotypes-present-day-and-ancient-dna-data).
 
 ## Scripts
 
