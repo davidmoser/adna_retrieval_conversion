@@ -19,12 +19,22 @@ Information on each analyzed SNP position (SNP id, physical/genetic location and
 .geno
 Genotypes (see note 2 below)
 
-Managed to compile convertf with help of ChatGPT, needed to libraries (mentioned in README) but then
-also had to add another library to the Makefile as a parameter.
+Managed to compile convertf with help of ChatGPT, needed two libraries (mentioned in README) but then
+also had to add "-llapacke" to the Makefile as a parameter.
+override LDLIBS += -lgsl -lopenblas -lm -lpthread -llapacke
 
 Convert packed ancestrymap to eigenstrat format (for further conversion to skicit allel format):
 Set parameters in CONVERTF/par.PACKEDANCESTRYMAP.ANCESTRYMAP to correct file
 Run: ../bin/convertf -p par.PACKEDANCESTRYMAP.ANCESTRYMAP
+"""
+genotypename:    ../../data/aadr_v54.1.p1_1240K_public.geno
+snpname:         ../../data/aadr_v54.1.p1_1240K_public.snp
+indivname:       ../../data/aadr_v54.1.p1_1240K_public.ind
+outputformat:    EIGENSTRAT
+genotypeoutname: ../../data/aadr_v54.1.p1_1240K_public_eigenstrat.geno
+snpoutname:      ../../data/aadr_v54.1.p1_1240K_public_eigenstrat.snp
+indivoutname:    ../../data/aadr_v54.1.p1_1240K_public_eigenstrat.ind
+"""
 
 Convert eigenstrat format to vcf:
 Run: python eigenstrat2vcf.py -s aadr_v54.1.p1_1240K_public_eigenstrat.snp -i aadr_v54.1.p1_1240K_public_eigenstrat.ind -g aadr_v54.1.p1_1240K_public_eigenstrat.geno -o aadr_v54.1.p1_1240K_public_eigenstrat.vcf
