@@ -21,7 +21,7 @@ def main():
     # Customize these variables
     dataverse_base = "https://dataverse.harvard.edu"  # Change to your Dataverse host
     dataset_persistent_id = "doi:10.7910/DVN/FFIDCW"  # Change to your dataset's persistent ID
-    output_folder = "data"
+    output_folder = "ancestrymap"
 
     # Create output directory if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
