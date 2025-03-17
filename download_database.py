@@ -1,49 +1,58 @@
-from pyDataverse.api import NativeApi, DataAccessApi
+import os
+import requests
 
 """
 This script downloads all files from a specified dataset in the Allen Ancient DNA Database hosted on Dataverse.
 The script uses the pyDataverse library to interact with the Dataverse API, retrieve the dataset, and download each file.
-
-Usage:
-- Set the base_url to the Dataverse instance URL.
-- Replace DOI with the dataset DOI.
-- Run the script to download all files from the dataset.
 """
 
-# Set the base URL of the Dataverse
-base_url = 'https://dataverse.harvard.edu/'
 
-# Create API instances
-api = NativeApi(base_url)
-data_api = DataAccessApi(base_url)
+def download_file(url, dest_path):
+    """Download a file from the specified URL and save it to dest_path."""
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(dest_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                if chunk:  # filter out keep-alive chunks
+                    f.write(chunk)
 
-# DOI of the Allen Ancient DNA Database
-DOI = "https://doi.org/10.7910/DVN/FFIDCW"
 
-# Get the dataset
-dataset = api.get_dataset(DOI)
+def main():
+    # Customize these variables
+    dataverse_base = "https://dataverse.harvard.edu"  # Change to your Dataverse host
+    dataset_persistent_id = "doi:10.7910/DVN/FFIDCW"  # Change to your dataset's persistent ID
+    output_folder = "data"
 
-# Check if the dataset retrieval was successful
-if dataset.status_code != 200:
-    raise Exception("Dataset not found. Check the DOI.")
+    # Create output directory if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
 
-# Get the list of datafiles in the dataset
-files_list = dataset.json()['data']['latestVersion']['files']
+    # Get dataset metadata using the persistentId
+    metadata_url = f"{dataverse_base}/api/datasets/:persistentId/?persistentId={dataset_persistent_id}"
+    response = requests.get(metadata_url)
+    response.raise_for_status()
+    dataset_metadata = response.json()
 
-# Download each file
-for file in files_list:
-    filename = file["dataFile"]["filename"]
-    file_id = file["dataFile"]["id"]
-    file_size = file["dataFile"]["filesize"]
-    print(f"Downloading file: {filename}, id: {file_id}, size: {file_size}")
+    # Extract list of files from the dataset metadata
+    files_list = dataset_metadata['data']['latestVersion']['files']
 
-    response = data_api.get_datafile(file_id)
-    if response.status_code != 200:
-        print(f"Failed to download file: {filename}")
-        continue
+    print(f"Found {len(files_list)} file(s) to download.")
 
-    with open(filename, "wb") as f:
-        f.write(response.content)
-    print(f"File downloaded: {filename}")
+    # Download each file
+    for file_info in files_list:
+        file_id = file_info['dataFile']['id']
+        file_label = file_info.get('label', f"file_{file_id}")
+        print(f"Downloading: {file_label} (ID: {file_id})")
 
-print("All files downloaded.")
+        # Build the download URL using the file id
+        download_url = f"{dataverse_base}/api/access/datafile/{file_id}"
+        dest_path = os.path.join(output_folder, file_label)
+
+        try:
+            download_file(download_url, dest_path)
+            print(f"Downloaded: {dest_path}")
+        except Exception as e:
+            print(f"Error downloading {file_label}: {e}")
+
+
+if __name__ == '__main__':
+    main()
