@@ -112,7 +112,7 @@ def create_vcf_header(individuals):
     return header
 
 
-def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, snp_max, ind_max):
+def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_max):
     snp_info = read_snp_file(snp_file, snp_max)
     individuals = read_ind_file(ind_file, ind_max)
 
@@ -149,11 +149,11 @@ def eigenstrat_to_vcf_yaml(file_path):
     ind_file = config.get("ind_file")
     geno_file = config.get("geno_file")
     output_vcf = config.get("output_vcf")
-    snp_max = config.get("snp_max", None)  # Optional
     ind_max = config.get("ind_max", None)  # Optional
+    snp_max = config.get("snp_max", None)  # Optional
 
     # Call the main function
-    eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, snp_max, ind_max)
+    eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_max)
 
 
 if __name__ == "__main__":

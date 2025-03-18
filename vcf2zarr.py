@@ -1,4 +1,7 @@
 import sys
+from shutil import rmtree
+from zipfile import ZIP_STORED
+
 import allel
 import numpy as np
 import yaml
@@ -35,11 +38,18 @@ def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
         fields='*',
         types={'calldata/GT': 'int8'},
         transformers=Transformer(),
-        chunk_length=ind_chunk, # individuals chunked together
-        chunk_width=snp_chunk, # SNPs chunked together
+        chunk_length=snp_chunk,  # SNPs chunked together
+        chunk_width=ind_chunk,  # individuals chunked together
         log=sys.stdout,
         overwrite=True,
     )
+
+    # Convert to ZipStore, there's no direct ZipStore support
+    dir_store = zarr.DirectoryStore(zarr_file)
+    zip_store = zarr.ZipStore(zarr_file + ".zip", mode="w", compression=ZIP_STORED)
+    zarr.copy_store(dir_store, zip_store)
+    zip_store.close()
+    rmtree(zarr_file)
 
 
 def vcf_to_zarr_yaml(file_path):
@@ -53,10 +63,8 @@ def vcf_to_zarr_yaml(file_path):
     ind_chunk = config.get("ind_chunk", None)  # Optional
     snp_chunk = config.get("snp_chunk", None)  # Optional
 
-    # Call the main function
     vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk)
 
 
 if __name__ == "__main__":
     vcf_to_zarr_yaml("config/vcf2zarr.yaml")
-
