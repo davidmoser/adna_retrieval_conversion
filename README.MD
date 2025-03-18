@@ -30,12 +30,16 @@ It downloads the ancestrymap data from the Allen Ancient DNA Database and places
 ### Convert Ancestrymap to Eigenstrat
 
 First compile or download the `convertf` binary.
-Adjust the filenames in the `config/ancestrymap2eigenstrat.params` file to match the downloaded files.
+Adjust the filenames in the `config/ancestrymap2eigenstrat.params` file to match the current filenames.
 You may also have to adjust the location of the `convertf` binary.
 Then run the `ancestrymap2eigenstrat.sh` script.
 
 ### Convert Eigenstrat to VCF
 
+Adjust the filenames in the `config/eigenstrat2vcf.yaml` file to match the current filenames.
+Then run the `eigenstrat2vcf.py` script.
+
+### Convert VCF to Zarr
 
 
 ## Scripts

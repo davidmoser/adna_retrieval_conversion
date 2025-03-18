@@ -1,4 +1,6 @@
-import argparse
+import os
+
+import yaml
 
 """
 This script converts genetic data from Eigenstrat format to VCF format.
@@ -7,6 +9,7 @@ Reads .snp, .ind, and .geno files, processes the data, and writes to a VCF file.
 Usage example:
 python script.py -s input.snp -i input.ind -g input.geno -o output.vcf -sx 1000 -ix 100
 """
+
 
 class SNP:
     def __init__(self, identifier, chromosome, position, reference_allele, alternate_allele):
@@ -67,6 +70,7 @@ def convert_snp(snp):
 
 
 def convert_geno_line(geno_eig_line, ind_max):
+    ind_max =  ind_max or -1
     # function to parse a line from .geno file and return genotype information
     geno_vcf_line = ""
     for index, eigen_type in enumerate(geno_eig_line):
@@ -112,6 +116,10 @@ def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, snp_max, ind_ma
     snp_info = read_snp_file(snp_file, snp_max)
     individuals = read_ind_file(ind_file, ind_max)
 
+    output_dir = os.path.dirname(output_vcf)
+    if output_dir:  # Avoid calling makedirs("") which causes an error
+        os.makedirs(output_dir, exist_ok=True)
+
     # Open the GENO file and the output VCF file
     with open(geno_file, 'r') as geno_file, open(output_vcf, 'w') as vcf_out:
         # Write the VCF header
@@ -131,15 +139,22 @@ def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, snp_max, ind_ma
             vcf_out.write('\n')
 
 
+def eigenstrat_to_vcf_yaml(file_path):
+    # Load config and call the main function with appropriate parameters.
+    with open(file_path, "r") as f:
+        config = yaml.safe_load(f)
+
+    # Extract required and optional parameters
+    snp_file = config.get("snp_file")
+    ind_file = config.get("ind_file")
+    geno_file = config.get("geno_file")
+    output_vcf = config.get("output_vcf")
+    snp_max = config.get("snp_max", None)  # Optional
+    ind_max = config.get("ind_max", None)  # Optional
+
+    # Call the main function
+    eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, snp_max, ind_max)
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert Eigenstrat format to VCF format.')
-    parser.add_argument('-s', '--snp', required=True, help='Input .snp file')
-    parser.add_argument('-i', '--ind', required=True, help='Input .ind file')
-    parser.add_argument('-g', '--geno', required=True, help='Input .geno file')
-    parser.add_argument('-o', '--output', required=True, help='Output VCF file name')
-    parser.add_argument('-sx', '--snpmax', required=False, default=-1, help='Maximum number of snps read from .snp file')
-    parser.add_argument('-ix', '--indmax', required=False, default=-1, help='Maximum number of individuals read from .ind file')
-
-    args = parser.parse_args()
-
-    eigenstrat_to_vcf(args.snp, args.ind, args.geno, args.output, int(args.snpmax), int(args.indmax))
+    eigenstrat_to_vcf_yaml("config/eigenstrat2vcf.yaml")

@@ -1,0 +1,6 @@
+snp_file: "./eigenstrat/v62.0_1240k_public_eigenstrat.snp"
+ind_file: "./eigenstrat/v62.0_1240k_public_eigenstrat.ind"
+geno_file: "./eigenstrat/v62.0_1240k_public_eigenstrat.geno"
+output_vcf: "./vcf/v62.0_1240k_public.vcf"
+snp_max:
+ind_max:
