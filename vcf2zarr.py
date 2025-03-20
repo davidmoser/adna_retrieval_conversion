@@ -41,7 +41,7 @@ def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
         chunk_length=snp_chunk,  # SNPs chunked together
         chunk_width=ind_chunk,  # individuals chunked together
         log=sys.stdout,
-        overwrite=True,
+        overwrite=False,
     )
 
     # Convert to ZipStore, there's no direct ZipStore support
