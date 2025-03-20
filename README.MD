@@ -1,4 +1,4 @@
-# Allen DNA Database Scripts
+# Allen Ancient DNA Resource Scripts
 
 ## Overview
 
@@ -18,7 +18,7 @@ the [Allen Ancient DNA Resource](https://reich.hms.harvard.edu/allen-ancient-dna
 
 ### Zarr format
 Format to store multidimensional arrays in chunks for efficient access.
-Enables fast access to rows (samples) and columns (SNPs) without loading the entire table.
+Enables fast access to rows (SNPs) and columns (samples) without loading the entire table.
 
 ## Download and Conversion
 
