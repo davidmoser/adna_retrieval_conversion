@@ -30,9 +30,11 @@ class Transformer(object):
 
 
 def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
+    # scikit-allel doesn't support a zipped zarr yet. work around.
+    zarr_file_without_zip = zarr_file.removesuffix(".zip")
     allel.vcf_to_zarr(
         input=vcf_file,
-        output=zarr_file,
+        output=zarr_file_without_zip,
         compressor=zarr.Blosc(cname="zstd", clevel=5, shuffle=0),
         fields="*",
         types={"calldata/GT": "int8"},
@@ -43,7 +45,7 @@ def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
         overwrite=False,
     )
     if zarr_file.endswith(".zip"):
-        convert_to_zarr_zip(zarr_file.removesuffix(".zip"), remove_directory=True)
+        convert_to_zarr_zip(zarr_file_without_zip, remove_directory=True)
 
 
 def vcf_to_zarr_yaml(file_path):
