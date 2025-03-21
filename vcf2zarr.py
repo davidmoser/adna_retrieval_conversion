@@ -42,7 +42,8 @@ def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
         log=sys.stdout,
         overwrite=False,
     )
-    convert_to_zarr_zip(zarr_file, remove_directory=True)
+    if zarr_file.endswith('.zip'):
+        convert_to_zarr_zip(zarr_file.removesuffix(".zip"), remove_directory=True)
 
 
 def vcf_to_zarr_yaml(file_path):
