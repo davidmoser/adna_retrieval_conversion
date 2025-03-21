@@ -1,12 +1,11 @@
 import sys
-from shutil import rmtree
-from zipfile import ZIP_STORED
 
 import allel
 import numpy as np
 import yaml
 
 import zarr
+from convert_to_zarr_zip import convert_to_zarr_zip
 
 """
 This script converts a VCF file to a Zarr array, transforming genotype calls in the process.
@@ -43,13 +42,7 @@ def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
         log=sys.stdout,
         overwrite=False,
     )
-
-    # Convert to ZipStore, there's no direct ZipStore support
-    dir_store = zarr.DirectoryStore(zarr_file)
-    zip_store = zarr.ZipStore(zarr_file + ".zip", mode="w", compression=ZIP_STORED)
-    zarr.copy_store(dir_store, zip_store)
-    zip_store.close()
-    rmtree(zarr_file)
+    convert_to_zarr_zip(zarr_file, remove_directory=True)
 
 
 def vcf_to_zarr_yaml(file_path):
