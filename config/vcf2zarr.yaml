@@ -1,4 +1,4 @@
 vcf_file: "./vcf/v62.0_1240k_public.vcf"
-zarr_file: "./zarr/v62.0_1240k_public.zarr.zip"
+zarr_file: "./zarr/v62.0_1240k_public_complete_snp_chunked.zarr.zip"
 ind_chunk: -1
 snp_chunk: 1024
