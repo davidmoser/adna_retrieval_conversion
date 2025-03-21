@@ -23,26 +23,26 @@ class Transformer(object):
         return fields
 
     def transform_chunk(self, chunk):
-        calls = chunk['calldata/GT']
+        calls = chunk["calldata/GT"]
         # Sum up calls: 0=homo ref, 1=hetero, 2=homo alt, -2=no reads
         calls = np.sum(calls, axis=2)
-        chunk['calldata/GT'] = calls
+        chunk["calldata/GT"] = calls
 
 
 def vcf_to_zarr(vcf_file, zarr_file, ind_chunk, snp_chunk):
     allel.vcf_to_zarr(
         input=vcf_file,
         output=zarr_file,
-        compressor=zarr.Blosc(cname='zstd', clevel=5, shuffle=0),
-        fields='*',
-        types={'calldata/GT': 'int8'},
+        compressor=zarr.Blosc(cname="zstd", clevel=5, shuffle=0),
+        fields="*",
+        types={"calldata/GT": "int8"},
         transformers=Transformer(),
         chunk_length=snp_chunk,  # SNPs chunked together
         chunk_width=ind_chunk,  # individuals chunked together
         log=sys.stdout,
         overwrite=False,
     )
-    if zarr_file.endswith('.zip'):
+    if zarr_file.endswith(".zip"):
         convert_to_zarr_zip(zarr_file.removesuffix(".zip"), remove_directory=True)
 
 

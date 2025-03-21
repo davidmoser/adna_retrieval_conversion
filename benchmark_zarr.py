@@ -52,7 +52,7 @@ internal_path = "calldata/GT"
 
 print("Benchmarking: {nb_batches} batches of {batch_size} rows")
 for store_path in store_paths:
-    array = zarr.open(store_path, mode='r')[internal_path]
+    array = zarr.open(store_path, mode="r")[internal_path]
 
     print(f"Store: {store_path} | Shape: {array.shape}")
     for flag, access_type in [(True, "consecutive"), (False, "random")]:

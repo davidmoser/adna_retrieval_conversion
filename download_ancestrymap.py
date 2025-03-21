@@ -11,7 +11,7 @@ def download_file(url, dest_path):
     """Download a file from the specified URL and save it to dest_path."""
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
-        with open(dest_path, 'wb') as f:
+        with open(dest_path, "wb") as f:
             for chunk in r.iter_content(chunk_size=8192):
                 if chunk:  # filter out keep-alive chunks
                     f.write(chunk)
@@ -33,14 +33,14 @@ def main():
     dataset_metadata = response.json()
 
     # Extract list of files from the dataset metadata
-    files_list = dataset_metadata['data']['latestVersion']['files']
+    files_list = dataset_metadata["data"]["latestVersion"]["files"]
 
     print(f"Found {len(files_list)} file(s) to download.")
 
     # Download each file
     for file_info in files_list:
-        file_id = file_info['dataFile']['id']
-        file_label = file_info.get('label', f"file_{file_id}")
+        file_id = file_info["dataFile"]["id"]
+        file_label = file_info.get("label", f"file_{file_id}")
         print(f"Downloading: {file_label} (ID: {file_id})")
 
         # Build the download URL using the file id
@@ -54,5 +54,5 @@ def main():
             print(f"Error downloading {file_label}: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

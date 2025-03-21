@@ -30,7 +30,7 @@ class Individual:
 def read_snp_file(snp_file, snp_max):
     # function to read .snp file and return SNP information
     snp_info = []
-    with open(snp_file, 'r') as file:
+    with open(snp_file, "r") as file:
         for index, line in enumerate(file):
             if index == snp_max:
                 break
@@ -50,7 +50,7 @@ def read_snp_file(snp_file, snp_max):
 def read_ind_file(ind_file, ind_max):
     # function to read .ind file and return individual information
     individuals = []
-    with open(ind_file, 'r') as file:
+    with open(ind_file, "r") as file:
         for index, line in enumerate(file):
             if index == ind_max:
                 break
@@ -75,22 +75,22 @@ def convert_geno_line(geno_eig_line, ind_max):
     geno_vcf_line = ""
     for index, eigen_type in enumerate(geno_eig_line):
         geno_vcf_line += convert_geno_type(eigen_type)
-        geno_vcf_line += '\t'
+        geno_vcf_line += "\t"
         if index == ind_max - 1:
             break
     return geno_vcf_line.rstrip()
 
 
 def convert_geno_type(eigen_type):
-    if eigen_type == '0':
+    if eigen_type == "0":
         return "1/1"
-    elif eigen_type == '1':
+    elif eigen_type == "1":
         return "1/0"
-    elif eigen_type == '2':
+    elif eigen_type == "2":
         return "0/0"
-    elif eigen_type == '9':
+    elif eigen_type == "9":
         return "."
-    elif eigen_type == '\n':
+    elif eigen_type == "\n":
         return ""
     else:
         raise Exception("Unknown genotype: " + eigen_type)
@@ -121,7 +121,7 @@ def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_ma
         os.makedirs(output_dir, exist_ok=True)
 
     # Open the GENO file and the output VCF file
-    with open(geno_file, 'r') as geno_file, open(output_vcf, 'w') as vcf_out:
+    with open(geno_file, "r") as geno_file, open(output_vcf, "w") as vcf_out:
         # Write the VCF header
         vcf_out.write(create_vcf_header(individuals))
 
@@ -136,7 +136,7 @@ def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_ma
             vcf_out.write(convert_snp(snp_info[geno_index]))
             vcf_out.write("\t1\tPASS\tNS=1\tGT\t")
             vcf_out.write(convert_geno_line(geno_line, ind_max))
-            vcf_out.write('\n')
+            vcf_out.write("\n")
 
 
 def eigenstrat_to_vcf_yaml(file_path):

@@ -4,7 +4,7 @@ import zarr
 
 """
 In the original files vcf/eigenstrat, one row is one SNP
-for learning it's optimal to rearrange so that one row is one sample
+for learning it"s optimal to rearrange so that one row is one sample
 in the resulting zarr array:
 - Dim 0 is the sample dimension
 - Dim 1 is the SNP dimension
@@ -20,18 +20,18 @@ Currently only copies the calldata array, other data is not copied.
 
 def rearrange_zarr(original_store, rearranged_store, array_path, ind_chunk):
     # Open the original zarr array
-    original_array = zarr.open(original_store, mode='r')[array_path]
+    original_array = zarr.open(original_store, mode="r")[array_path]
 
     # Get the shape of the original array
     shape = original_array.shape
 
     chunk_shape = original_array.chunks
     if chunk_shape[1] != shape[1]:
-        raise ValueError('Iteration below only works if no chunking along dim 1')
+        raise ValueError("Iteration below only works if no chunking along dim 1")
 
     # Create a new zarr array with switched dimensions
     new_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=rearranged_store, path=array_path,
-                           overwrite=True, dtype='int8')
+                           overwrite=True, dtype="int8")
 
     # Iterate over the chunks along the first dimension (chunks of multiple SNPs) and copy them to the new array
     write_chunk_size = 20 * chunk_shape[0]
