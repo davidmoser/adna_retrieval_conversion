@@ -1,4 +1,4 @@
 original_store: "./zarr/v62.0_1240k_public.zarr.zip"
-rearranged_store: "./zarr/v62.0_1240k_public_rearranged.zarr"
+rearranged_store: "./zarr/v62.0_1240k_public_rearranged.zarr.zip"
 array_path: "calldata/GT"
 ind_chunk: 1

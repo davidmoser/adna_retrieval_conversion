@@ -1,6 +1,7 @@
 import yaml
 
 import zarr
+from convert_to_zarr_zip import convert_to_zarr_zip
 
 """
 In the original files vcf/eigenstrat, one row is one SNP
@@ -30,17 +31,38 @@ def rearrange_zarr(original_store, rearranged_store, array_path, ind_chunk):
         raise ValueError("Iteration below only works if no chunking along dim 1")
 
     # Create a new zarr array with switched dimensions
-    new_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=rearranged_store, path=array_path,
-                           overwrite=True, dtype="int8")
+    # writing directly to a zip store gives lots of warnings (overwriting files), not sure if it's an issue.
+    store_path = rearranged_store.removesuffix(".zip")
+    # We first write to an uncompressed store, because we repeatedly write to the same chunks
+    store = zarr.DirectoryStore(store_path)
+    uncompressed_array_path = array_path + "_uncompressed"
+    uncompressed_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=store,
+                                    path=uncompressed_array_path,
+                                    overwrite=True, dtype="int8")
 
     # Iterate over the chunks along the first dimension (chunks of multiple SNPs) and copy them to the new array
     write_chunk_size = 20 * chunk_shape[0]
     for i in range(0, shape[0], write_chunk_size):
-        print(f"Writing chunk starting at {i}")
+        print(f"Writing snp chunks starting at {i}")
         chunk_start = i
         chunk_end = min(i + write_chunk_size, shape[0])
         chunk = original_array[chunk_start:chunk_end, :]
-        new_array[:, chunk_start:chunk_end] = chunk.T
+        uncompressed_array[:, chunk_start:chunk_end] = chunk.T
+
+    # Now we copy over to a compressed array
+    compressed_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=store, path=array_path,
+                                  overwrite=True, dtype="int8",
+                                  compressor=zarr.Blosc(cname="zstd", clevel=5, shuffle=0))
+    for i in range(shape[1]):
+        print(f"Compressing indiv chunk {i}")
+        compressed_array[i] = uncompressed_array[i]
+
+    # Remove temp array
+    del store[uncompressed_array_path]
+
+    # Finally to zip
+    if rearranged_store.endswith(".zip"):
+        convert_to_zarr_zip(store_path, remove_directory=True)
 
 
 def rearrange_zarr_yaml(file_path):
