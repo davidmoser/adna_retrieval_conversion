@@ -1,7 +1,6 @@
 import yaml
 
 import zarr
-from convert_to_zarr_zip import convert_to_zarr_zip
 
 """
 In the original files vcf/eigenstrat, one row is one SNP
@@ -14,12 +13,14 @@ in the resulting zarr array:
 That means array[i] will retrieve all the SNPs for sample i which reside in a single file
 It also means that retrieving all sample values for one SNP is array[:,j] and will retrieve
 all the files. So, filtering or normalization of SNPs should happen before rearranging
+
+Currently only copies the calldata array, other data is not copied.
 """
 
 
-def rearrange_zarr(original_store, rearranged_store, zarr_path, ind_chunk, zipped=True):
+def rearrange_zarr(original_store, rearranged_store, array_path, ind_chunk):
     # Open the original zarr array
-    original_array = zarr.open(original_store, mode='r')[zarr_path]
+    original_array = zarr.open(original_store, mode='r')[array_path]
 
     # Get the shape of the original array
     shape = original_array.shape
@@ -29,7 +30,7 @@ def rearrange_zarr(original_store, rearranged_store, zarr_path, ind_chunk, zippe
         raise ValueError('Iteration below only works if no chunking along dim 1')
 
     # Create a new zarr array with switched dimensions
-    new_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=rearranged_store, path=zarr_path,
+    new_array = zarr.zeros((shape[1], shape[0]), chunks=(ind_chunk, shape[0]), store=rearranged_store, path=array_path,
                            overwrite=True, dtype='int8')
 
     # Iterate over the chunks along the first dimension (chunks of multiple SNPs) and copy them to the new array
@@ -41,9 +42,6 @@ def rearrange_zarr(original_store, rearranged_store, zarr_path, ind_chunk, zippe
         chunk = original_array[chunk_start:chunk_end, :]
         new_array[:, chunk_start:chunk_end] = chunk.T
 
-    if zipped:
-        convert_to_zarr_zip(rearranged_store, remove_directory=True)
-
 
 def rearrange_zarr_yaml(file_path):
     # Load config and call the main function with appropriate parameters.
@@ -53,10 +51,10 @@ def rearrange_zarr_yaml(file_path):
     # Extract required and optional parameters
     original_store = config.get("original_store")
     rearranged_store = config.get("rearranged_store")
-    zarr_path = config.get("zarr_path")
+    array_path = config.get("array_path")
     ind_chunk = config.get("ind_chunk")
 
-    rearrange_zarr(original_store, rearranged_store, zarr_path, ind_chunk)
+    rearrange_zarr(original_store, rearranged_store, array_path, ind_chunk)
 
 
 if __name__ == "__main__":
