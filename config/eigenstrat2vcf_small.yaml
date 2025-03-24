@@ -1,0 +1,10 @@
+snp_file: "./eigenstrat/v62.0_1240k_public.snp"
+ind_file: "./eigenstrat/v62.0_1240k_public.ind"
+anno_file: "./ancestrymap/v62.0_1240k_public.anno"
+geno_file: "./eigenstrat/v62.0_1240k_public_eigenstrat.geno"
+vcf_file_out: "./vcf/v62.0_1240k_public_small.vcf"
+snp_file_out: "./vcf/v62.0_1240k_public_small.snp"
+ind_file_out: "./vcf/v62.0_1240k_public_small.ind"
+anno_file_out: "./vcf/v62.0_1240k_public_small.anno"
+snp_max: 10000
+ind_max: 1000

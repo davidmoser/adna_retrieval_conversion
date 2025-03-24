@@ -70,7 +70,7 @@ def convert_snp(snp):
 
 
 def convert_geno_line(geno_eig_line, ind_max):
-    ind_max =  ind_max or -1
+    ind_max = ind_max or -1
     # function to parse a line from .geno file and return genotype information
     geno_vcf_line = ""
     for index, eigen_type in enumerate(geno_eig_line):
@@ -112,16 +112,17 @@ def create_vcf_header(individuals):
     return header
 
 
-def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_max):
+def eigenstrat_to_vcf(snp_file, ind_file, geno_file, anno_file, vcf_file_out, snp_file_out, ind_file_out, anno_file_out,
+                      ind_max, snp_max):
     snp_info = read_snp_file(snp_file, snp_max)
     individuals = read_ind_file(ind_file, ind_max)
 
-    output_dir = os.path.dirname(output_vcf)
+    output_dir = os.path.dirname(vcf_file_out)
     if output_dir:  # Avoid calling makedirs("") which causes an error
         os.makedirs(output_dir, exist_ok=True)
 
     # Open the GENO file and the output VCF file
-    with open(geno_file, "r") as geno_file, open(output_vcf, "w") as vcf_out:
+    with open(geno_file, "r") as geno_file, open(vcf_file_out, "w") as vcf_out:
         # Write the VCF header
         vcf_out.write(create_vcf_header(individuals))
 
@@ -138,22 +139,43 @@ def eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_ma
             vcf_out.write(convert_geno_line(geno_line, ind_max))
             vcf_out.write("\n")
 
+    # if output file names are given, copy or trim the corresponding meta csv files
+    trim_file(snp_file, snp_file_out, len(snp_info), has_header=False)
+    trim_file(ind_file, ind_file_out, len(individuals), has_header=False)
+    trim_file(anno_file, anno_file_out, len(individuals), has_header=True)
+
+
+def trim_file(input_path, output_path, no_rows, has_header=True):
+    if not output_path: return
+    with open(input_path, 'r', encoding='utf-8') as infile:
+        lines = infile.readlines()
+        end = no_rows + (1 if has_header else 0)
+        trimmed_lines = lines[:end]
+
+    with open(output_path, 'w', encoding='utf-8') as outfile:
+        outfile.writelines(trimmed_lines)
+
+    return output_path
+
 
 def eigenstrat_to_vcf_yaml(file_path):
     # Load config and call the main function with appropriate parameters.
     with open(file_path, "r") as f:
         config = yaml.safe_load(f)
 
-    # Extract required and optional parameters
-    snp_file = config.get("snp_file")
-    ind_file = config.get("ind_file")
-    geno_file = config.get("geno_file")
-    output_vcf = config.get("output_vcf")
-    ind_max = config.get("ind_max", None)  # Optional
-    snp_max = config.get("snp_max", None)  # Optional
-
     # Call the main function
-    eigenstrat_to_vcf(snp_file, ind_file, geno_file, output_vcf, ind_max, snp_max)
+    eigenstrat_to_vcf(
+        snp_file=config.get("snp_file"),
+        ind_file=config.get("ind_file"),
+        geno_file=config.get("geno_file"),
+        anno_file=config.get("anno_file", None), # Optional
+        vcf_file_out=config.get("vcf_file_out"),
+        snp_file_out=config.get("snp_file_out", None),  # Optional
+        ind_file_out=config.get("ind_file_out", None),  # Optional
+        anno_file_out=config.get("anno_file_out", None),  # Optional
+        ind_max=config.get("ind_max", None),  # Optional
+        snp_max=config.get("snp_max", None),  # Optional
+    )
 
 
 if __name__ == "__main__":

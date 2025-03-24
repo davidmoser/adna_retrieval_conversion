@@ -3,5 +3,5 @@ snpname:         ./ancestrymap/v62.0_1240k_public.snp
 indivname:       ./ancestrymap/v62.0_1240k_public.ind
 outputformat:    EIGENSTRAT
 genotypeoutname: ./eigenstrat/v62.0_1240k_public_eigenstrat.geno
-snpoutname:      ./eigenstrat/v62.0_1240k_public_eigenstrat.snp
-indivoutname:    ./eigenstrat/v62.0_1240k_public_eigenstrat.ind
+snpoutname:      ./eigenstrat/v62.0_1240k_public.snp
+indivoutname:    ./eigenstrat/v62.0_1240k_public.ind
